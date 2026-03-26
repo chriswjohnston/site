@@ -1,11 +1,4 @@
+# Site is now served via GitHub Pages
+# This file kept for reference only
 [build]
   publish = "docs"
-  command = "python build_site.py"
-
-[functions]
-  directory = "netlify/functions"
-
-[[redirects]]
-  from = "/news/*"
-  to = "/news/index.html"
-  status = 200
