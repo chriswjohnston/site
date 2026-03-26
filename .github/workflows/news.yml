@@ -1,0 +1,83 @@
+name: News & Digest
+
+on:
+  schedule:
+    - cron: '0 12 * * *'   # Daily 8AM Eastern
+  workflow_dispatch:
+    inputs:
+      force_digest:
+        description: 'Force send digest email now'
+        type: boolean
+        default: false
+
+jobs:
+  scrape-and-build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4.2.2
+
+      - uses: actions/setup-python@v5.4.0
+        with:
+          python-version: '3.11'
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Python deps
+        run: pip install requests beautifulsoup4
+
+      - name: Scrape news
+        env:
+          FB_C_USER: ${{ secrets.FB_C_USER }}
+          FB_XS: ${{ secrets.FB_XS }}
+        run: python scrape_news.py
+
+      - name: Build site
+        env:
+          LAUNCH_DATE: ${{ vars.LAUNCH_DATE || '2026-05-02' }}
+        run: python build_site.py
+
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add src/news.json docs/
+          if git diff --staged --quiet; then
+            echo "No changes"
+          else
+            git commit -m "Auto: news $(date +'%Y-%m-%d')"
+            git push
+          fi
+
+  send-digest:
+    runs-on: ubuntu-latest
+    needs: scrape-and-build
+    if: |
+      (github.event_name == 'schedule' && github.run_number % 14 == 0) ||
+      (github.event_name == 'workflow_dispatch' && inputs.force_digest == true)
+
+    steps:
+      - uses: actions/checkout@v4.2.2
+        with:
+          ref: main
+
+      - uses: actions/setup-python@v5.4.0
+        with:
+          python-version: '3.11'
+
+      - name: Install deps
+        run: pip install requests
+
+      - name: Ensure summaries.json exists
+        run: '[ -f summaries.json ] || echo "{}" > summaries.json'
+
+      - name: Send digest + post to Facebook
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          FB_PAGE_TOKEN: ${{ secrets.FB_PAGE_TOKEN }}
+          FB_PAGE_ID: ${{ secrets.FB_PAGE_ID }}
+        run: python send_digest.py
