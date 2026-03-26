@@ -1,16 +1,5 @@
-// netlify/functions/subscribe.js
-// ================================
-// Receives { email } POST, validates it,
-// then adds to subscribers.json in the GitHub repo via the GitHub API.
-//
-// Required Netlify environment variables:
-//   GITHUB_TOKEN  — a Personal Access Token with repo write access
-//   GITHUB_OWNER  — your GitHub username (chriswjohnston)
-//   GITHUB_REPO   — repo name (chriswjohnston-site)
-
 const https = require("https");
-
-const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
+const GITHUB_TOKEN = process.env.REPO_TOKEN;
 const GITHUB_OWNER = process.env.GITHUB_OWNER || "chriswjohnston";
 const GITHUB_REPO  = process.env.GITHUB_REPO  || "chriswjohnston-site";
 const FILE_PATH    = "subscribers.json";
@@ -19,14 +8,12 @@ function githubRequest(method, path, body) {
   return new Promise((resolve, reject) => {
     const data = body ? JSON.stringify(body) : null;
     const req = https.request({
-      hostname: "api.github.com",
-      path,
-      method,
+      hostname: "api.github.com", path, method,
       headers: {
         "Authorization": `Bearer ${GITHUB_TOKEN}`,
-        "User-Agent":    "chriswjohnston-site",
-        "Content-Type":  "application/json",
-        "Accept":        "application/vnd.github.v3+json",
+        "User-Agent": "chriswjohnston-site",
+        "Content-Type": "application/json",
+        "Accept": "application/vnd.github.v3+json",
         ...(data ? { "Content-Length": Buffer.byteLength(data) } : {}),
       },
     }, (res) => {
@@ -49,84 +36,41 @@ exports.handler = async (event) => {
     "Access-Control-Allow-Headers": "Content-Type",
     "Content-Type": "application/json",
   };
+  if (event.httpMethod === "OPTIONS") return { statusCode: 204, headers, body: "" };
+  if (event.httpMethod !== "POST") return { statusCode: 405, headers, body: JSON.stringify({ error: "Method not allowed" }) };
 
-  if (event.httpMethod === "OPTIONS") {
-    return { statusCode: 204, headers, body: "" };
-  }
-
-  if (event.httpMethod !== "POST") {
-    return { statusCode: 405, headers, body: JSON.stringify({ error: "Method not allowed" }) };
-  }
-
-  // Parse and validate email
   let email;
-  try {
-    ({ email } = JSON.parse(event.body));
-  } catch {
-    return { statusCode: 400, headers, body: JSON.stringify({ error: "Invalid JSON" }) };
-  }
+  try { ({ email } = JSON.parse(event.body)); }
+  catch { return { statusCode: 400, headers, body: JSON.stringify({ error: "Invalid JSON" }) }; }
 
-  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
     return { statusCode: 400, headers, body: JSON.stringify({ error: "Invalid email" }) };
-  }
 
   email = email.toLowerCase().trim();
+  if (!GITHUB_TOKEN) return { statusCode: 500, headers, body: JSON.stringify({ error: "Server error" }) };
 
-  if (!GITHUB_TOKEN) {
-    console.error("GITHUB_TOKEN not set");
-    return { statusCode: 500, headers, body: JSON.stringify({ error: "Server configuration error" }) };
-  }
-
-  // Get current subscribers.json from GitHub
   const getResp = await githubRequest("GET", `/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${FILE_PATH}`);
-
-  let subscribers = { subscribers: [] };
-  let sha = null;
-
+  let subscribers = { subscribers: [] }, sha = null;
   if (getResp.status === 200) {
     try {
       const decoded = Buffer.from(getResp.body.content, "base64").toString("utf8");
       subscribers = JSON.parse(decoded);
       sha = getResp.body.sha;
-    } catch {
-      subscribers = { subscribers: [] };
-    }
+    } catch { subscribers = { subscribers: [] }; }
   }
 
-  // Check for duplicate
   const existing = subscribers.subscribers || [];
-  const already = existing.some(s =>
-    (typeof s === "string" ? s : s.email) === email
-  );
-
-  if (already) {
+  if (existing.some(s => (typeof s === "string" ? s : s.email) === email))
     return { statusCode: 200, headers, body: JSON.stringify({ message: "Already subscribed" }) };
-  }
 
-  // Add new subscriber
-  subscribers.subscribers = [
-    ...existing,
-    { email, subscribed_at: new Date().toISOString() }
-  ];
-
-  // Write back to GitHub
+  subscribers.subscribers = [...existing, { email, subscribed_at: new Date().toISOString() }];
   const content = Buffer.from(JSON.stringify(subscribers, null, 2)).toString("base64");
-  const putBody = {
-    message: `Add subscriber ${email.replace(/@.*/, "@...")}`,
-    content,
-    ...(sha ? { sha } : {}),
-  };
-
-  const putResp = await githubRequest(
-    "PUT",
+  const putResp = await githubRequest("PUT",
     `/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${FILE_PATH}`,
-    putBody
+    { message: "Add subscriber", content, ...(sha ? { sha } : {}) }
   );
 
-  if (putResp.status === 200 || putResp.status === 201) {
+  if (putResp.status === 200 || putResp.status === 201)
     return { statusCode: 200, headers, body: JSON.stringify({ message: "Subscribed!" }) };
-  } else {
-    console.error("GitHub write failed:", putResp.body);
-    return { statusCode: 500, headers, body: JSON.stringify({ error: "Failed to save" }) };
-  }
+  return { statusCode: 500, headers, body: JSON.stringify({ error: "Failed to save" }) };
 };
