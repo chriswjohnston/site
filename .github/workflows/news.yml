@@ -53,12 +53,12 @@ jobs:
             git push
           fi
 
-  send-digest:
-    runs-on: ubuntu-latest
-    needs: scrape-and-build
-    if: |
-      (github.event_name == 'schedule' && github.run_number % 14 == 0) ||
-      (github.event_name == 'workflow_dispatch' && inputs.force_digest == true)
+ send-digest:
+  runs-on: ubuntu-latest
+  needs: scrape-and-build
+  if: >
+    (github.event_name == 'schedule' && mod(github.run_number, 14) == 0) ||
+    (github.event_name == 'workflow_dispatch' && inputs.force_digest == true)
 
     steps:
       - uses: actions/checkout@v4.2.2
