@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>chriswjohnston.ca — Coming Soon</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Lato:wght@300;400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --forest: #2C4A3E;
+      --warm: #E8C98A;
+      --sky: #A8D5E2;
+      --white: #FFFFFF;
+    }
+
+    html, body {
+      height: 100%;
+    }
+
+    body {
+      font-family: 'Lato', sans-serif;
+      background: var(--forest);
+      color: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Subtle texture */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        -45deg,
+        transparent,
+        transparent 60px,
+        rgba(255,255,255,0.012) 60px,
+        rgba(255,255,255,0.012) 120px
+      );
+      pointer-events: none;
+    }
+
+    .container {
+      text-align: center;
+      padding: 2rem;
+      position: relative;
+      z-index: 1;
+      animation: fadeIn 1.2s ease forwards;
+    }
+
+    .name {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.5rem, 8vw, 5rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1;
+      margin-bottom: 0.5rem;
+    }
+
+    .name em {
+      font-style: normal;
+      color: var(--warm);
+    }
+
+    .divider {
+      width: 60px;
+      height: 3px;
+      background: var(--warm);
+      margin: 1.5rem auto;
+      opacity: 0.7;
+      border-radius: 2px;
+    }
+
+    .tagline {
+      font-size: clamp(0.85rem, 2vw, 1rem);
+      font-weight: 300;
+      color: rgba(255,255,255,0.55);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      margin-bottom: 3.5rem;
+    }
+
+    /* Countdown */
+    .countdown {
+      display: flex;
+      gap: clamp(1rem, 4vw, 3rem);
+      justify-content: center;
+      align-items: flex-start;
+      margin-bottom: 3rem;
+    }
+
+    .unit {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .unit-number {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.5rem, 7vw, 4.5rem);
+      font-weight: 700;
+      color: var(--warm);
+      line-height: 1;
+      min-width: 2ch;
+      text-align: center;
+    }
+
+    .unit-label {
+      font-size: clamp(0.6rem, 1.5vw, 0.72rem);
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.4);
+    }
+
+    .unit-sep {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      color: rgba(232,201,138,0.3);
+      line-height: 1;
+      padding-top: 0.1em;
+    }
+
+    .archive-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: rgba(255,255,255,0.4);
+      text-decoration: none;
+      font-size: 0.8rem;
+      font-weight: 400;
+      letter-spacing: 0.05em;
+      border-bottom: 1px solid rgba(255,255,255,0.15);
+      padding-bottom: 0.15rem;
+      transition: color 0.2s, border-color 0.2s;
+    }
+
+    .archive-link:hover {
+      color: var(--sky);
+      border-color: var(--sky);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 class="name">Chris <em>Johnston</em></h1>
+    <div class="divider"></div>
+    <p class="tagline">Nipissing Township &nbsp;&middot;&nbsp; Something's coming</p>
+
+    <div class="countdown">
+      <div class="unit">
+        <div class="unit-number" id="days">--</div>
+        <div class="unit-label">Days</div>
+      </div>
+      <div class="unit-sep">:</div>
+      <div class="unit">
+        <div class="unit-number" id="hours">--</div>
+        <div class="unit-label">Hours</div>
+      </div>
+      <div class="unit-sep">:</div>
+      <div class="unit">
+        <div class="unit-number" id="minutes">--</div>
+        <div class="unit-label">Minutes</div>
+      </div>
+      <div class="unit-sep">:</div>
+      <div class="unit">
+        <div class="unit-number" id="seconds">--</div>
+        <div class="unit-label">Seconds</div>
+      </div>
+    </div>
+
+    <a href="https://council.chriswjohnston.ca" class="archive-link">
+      Nipissing Township Council Archive →
+    </a>
+  </div>
+
+  <script>
+    // ── SET YOUR LAUNCH DATE HERE ──────────────────────────────
+    // Format: "Month Day, Year HH:MM:SS" in Eastern Time
+    const LAUNCH = new Date("October 1, 2026 09:00:00 EDT");
+    // ───────────────────────────────────────────────────────────
+
+    const days    = document.getElementById("days");
+    const hours   = document.getElementById("hours");
+    const minutes = document.getElementById("minutes");
+    const seconds = document.getElementById("seconds");
+
+    function pad(n) {
+      return String(Math.max(0, n)).padStart(2, "0");
+    }
+
+    function tick() {
+      const diff = LAUNCH - Date.now();
+      if (diff <= 0) {
+        days.textContent = hours.textContent = minutes.textContent = seconds.textContent = "00";
+        return;
+      }
+      const d = Math.floor(diff / 86400000);
+      const h = Math.floor((diff % 86400000) / 3600000);
+      const m = Math.floor((diff % 3600000) / 60000);
+      const s = Math.floor((diff % 60000) / 1000);
+      days.textContent    = pad(d);
+      hours.textContent   = pad(h);
+      minutes.textContent = pad(m);
+      seconds.textContent = pad(s);
+    }
+
+    tick();
+    setInterval(tick, 1000);
+  </script>
+</body>
+</html>
