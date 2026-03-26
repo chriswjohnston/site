@@ -1,0 +1,52 @@
+name: Build Site
+
+on:
+  push:
+    branches: [main, stage]
+  schedule:
+    - cron: '0 17 * * *'   # Daily 1PM Eastern (noon + buffer)
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4.2.2
+
+      - uses: actions/setup-python@v5.4.0
+        with:
+          python-version: '3.11'
+
+      - name: Install deps
+        run: pip install requests beautifulsoup4
+
+      - name: Set mode
+        id: mode
+        run: |
+          # Stage branch always shows campaign site
+          if [[ "${{ github.ref_name }}" == "stage" ]]; then
+            echo "LAUNCH_DATE=2000-01-01" >> $GITHUB_ENV
+            echo "mode=campaign (stage)" >> $GITHUB_OUTPUT
+          else
+            echo "LAUNCH_DATE=${{ vars.LAUNCH_DATE || '2026-05-02' }}" >> $GITHUB_ENV
+            echo "mode=auto" >> $GITHUB_OUTPUT
+          fi
+          echo "Branch: ${{ github.ref_name }} | Mode: ${{ steps.mode.outputs.mode }}"
+
+      - name: Build site
+        run: python build_site.py
+
+      - name: Commit docs/
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/
+          if git diff --staged --quiet; then
+            echo "No changes"
+          else
+            git commit -m "Auto-build: $(date +'%Y-%m-%d %H:%M') [${{ github.ref_name }}]"
+            git push
+          fi
