@@ -55,12 +55,22 @@ jobs:
   send-digest:
     runs-on: ubuntu-latest
     needs: scrape-and-build
-    if: >
-      github.event_name == 'workflow_dispatch' || 
-      (github.event_name == 'schedule' && mod(github.run_number, 14) == 0)
 
     steps:
-      - uses: actions/checkout@v4.2.2
+      # Step 1: Exit early if not 14th run and not forced
+      - name: Check if digest should run
+        run: |
+          if [ "${{ github.event_name }}" = "schedule" ] && [ $((GITHUB_RUN_NUMBER % 14)) -ne 0 ]; then
+            echo "Not the 14th scheduled run — skipping digest"
+            exit 0
+          fi
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.force_digest }}" != "true" ]; then
+            echo "Manual run without force_digest — skipping digest"
+            exit 0
+          fi
+
+      - name: Checkout repo
+        uses: actions/checkout@v4.2.2
         with:
           ref: main
 
