@@ -38,7 +38,7 @@ document.getElementById('signup-form').addEventListener('submit',async function(
   const email=this.email.value, msg=document.getElementById('signup-msg'), btn=this.querySelector('button');
   btn.textContent='Subscribing\u2026'; btn.disabled=true;
   try{
-    const r=await fetch('/.netlify/functions/subscribe',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email})});
+    const r=await fetch('https://formspree.io/f/YOUR_FORM_ID',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email})});
     if(r.ok){msg.textContent='\u2713 Subscribed! Watch your inbox.';msg.style.color='#2C4A3E';msg.style.display='block';this.reset();}
     else throw new Error();
   }catch{msg.textContent='Something went wrong \u2014 please try again.';msg.style.color='#C06830';msg.style.display='block';}
