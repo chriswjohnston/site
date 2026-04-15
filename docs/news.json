@@ -1,6 +1,16 @@
 {
-  "updated": "April 14, 2026",
+  "updated": "April 15, 2026",
   "posts": [
+    {
+      "title": "Public Notice – Road Closures",
+      "url": "https://nipissingtownship.com/public-notice-granite-hill-road/",
+      "date": "April 14, 2026",
+      "date_iso": "2026-04-14",
+      "excerpt": "Please be advised the following roads are closed: Granite Hill Road Wolfe Lake Road from Alsace Road to Wolfe Lake Beach. Wolfe Lake is now open from Hwy 534 to Wolfe Lake Beach Alsace Road is now open, however down to…",
+      "source": "Township of Nipissing",
+      "priority": 1,
+      "fingerprint": "36933577 534 advised alsace area beach beachalsace between care closed closures continues crew down drive following from granite hill however hwy lake lane monitor more notice now one open please public read road roads roadwolfe wolfe works"
+    },
     {
       "title": "Township Office and Landfill Upcoming Holiday Closure",
       "url": "https://nipissingtownship.com/township-office-and-landfill-upcoming-holiday-closure/",
