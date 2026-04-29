@@ -1,6 +1,16 @@
 {
-  "updated": "April 28, 2026",
+  "updated": "April 29, 2026",
   "posts": [
+    {
+      "title": "So You Want To Run For Council?",
+      "url": "https://nipissingtownship.com/so-you-want-to-run-for-council-2/",
+      "date": "April 28, 2026",
+      "date_iso": "2026-04-28",
+      "excerpt": "",
+      "source": "Township of Nipissing",
+      "priority": 1,
+      "fingerprint": "council run so want you"
+    },
     {
       "title": "Public Notice – Wolfe Lake Road Closure April 27 & 28 2026",
       "url": "https://nipissingtownship.com/public-notice-granite-hill-road/",
@@ -90,16 +100,6 @@
       "source": "Township of Nipissing",
       "priority": 1,
       "fingerprint": "174 202020 2026 27 34 3950 42r5662 522 amend amendment application as bylaw complete concession corporation deemed described highway known legally locally located lot march meeting more nipissing notice part plan please property public read received subject take township zoning"
-    },
-    {
-      "title": "So, You Want To Run For Council?",
-      "url": "https://nipissingtownship.com/so-you-want-to-run-for-council/",
-      "date": "March 18, 2026",
-      "date_iso": "2026-03-18",
-      "excerpt": "",
-      "source": "Township of Nipissing",
-      "priority": 1,
-      "fingerprint": "council run so want you"
     },
     {
       "title": "Public Notice",
