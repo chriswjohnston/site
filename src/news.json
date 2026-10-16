@@ -1,16 +1,6 @@
 {
-  "updated": "October 15, 2026",
+  "updated": "October 16, 2026",
   "posts": [
-    {
-      "title": "Afternoon Cards: October 20th – November 24th",
-      "url": "https://nipissingtownship.com/afternoon-cards-october-20th-november-24th/",
-      "date": "October 13, 2026",
-      "date_iso": "2026-10-13",
-      "excerpt": "On Tuesdays beginning October 20th – November 24th from 1:00 pm 3:30 pm Enjoy afternoon cards at the Township of Nipissing Community Centre, 4381 Highway 654. Whether you are looking to dust off your card playing…",
-      "source": "Township of Nipissing",
-      "priority": 1,
-      "fingerprint": "100 20th 24th 330 4381 654 afternoon appeared beginning cards centre community enjoy first from highway nipissing november october pm post township tuesdays whether you"
-    },
     {
       "title": "Bear Creek Road Bridge Paving Update",
       "url": "https://nipissingtownship.com/bear-creek-road-update-september-4-2026/",
@@ -20,6 +10,16 @@
       "source": "Township of Nipissing",
       "priority": 1,
       "fingerprint": "allowing appeared bear bridge complete creek culvert first from funding government grant health nipissing over paving post provincial received replacement road safety stream through township update water"
+    },
+    {
+      "title": "Afternoon Cards: October 20th – November 24th",
+      "url": "https://nipissingtownship.com/afternoon-cards-october-20th-november-24th/",
+      "date": "October 13, 2026",
+      "date_iso": "2026-10-13",
+      "excerpt": "On Tuesdays beginning October 20th – November 24th from 1:00 pm 3:30 pm Enjoy afternoon cards at the Township of Nipissing Community Centre, 4381 Highway 654. Whether you are looking to dust off your card playing…",
+      "source": "Township of Nipissing",
+      "priority": 1,
+      "fingerprint": "100 20th 24th 330 4381 654 afternoon appeared beginning cards centre community enjoy first from highway nipissing november october pm post township tuesdays whether you"
     },
     {
       "title": "Electronic Landfill Cards",
